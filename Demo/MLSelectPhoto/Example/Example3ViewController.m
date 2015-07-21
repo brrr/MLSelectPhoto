@@ -68,7 +68,7 @@
     pickerVc.selectPickers = self.assets;
     pickerVc.minCount = 9;
     pickerVc.status = PickerViewShowStatusCameraRoll;
-    [pickerVc show];
+    [pickerVc showPickerVc:self];
     __weak typeof(self) weakSelf = self;
     pickerVc.callBack = ^(NSArray *assets){
         weakSelf.assets = assets;

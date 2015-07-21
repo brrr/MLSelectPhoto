@@ -44,7 +44,7 @@ typedef NS_ENUM(NSInteger , PickerViewShowStatus) {
 @property (assign,nonatomic) BOOL topShowPhotoPicker;
 // @function
 // 展示控制器
-- (void)show;
+- (void)showPickerVc:(UIViewController *)vc;
 
 /**
  *  传入一个图片对象（ALAsset、URL）

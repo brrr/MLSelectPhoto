@@ -68,7 +68,7 @@
     // 默认最多能选9张图片
     pickerVc.minCount = 5;
     pickerVc.status = PickerViewShowStatusCameraRoll;
-    [pickerVc show];
+    [pickerVc showPickerVc:self];
     __weak typeof(self) weakSelf = self;
     pickerVc.callBack = ^(NSArray *assets){
         [weakSelf.assets addObjectsFromArray:assets];

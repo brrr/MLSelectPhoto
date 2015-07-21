@@ -72,7 +72,7 @@
     // 最多能选9个视频
     pickerVc.minCount = 9;
     pickerVc.status = PickerViewShowStatusVideo;
-    [pickerVc show];
+    [pickerVc showPickerVc:self];
     /**
      *
      传值可以用代理，或者用block来接收，以下是block的传值

@@ -26,7 +26,7 @@
  // 设置代理回调
  pickerVc.delegate = self;
  // 展示控制器
- [pickerVc show];
+ [pickerVc showPickerVc:self];
  
  第一种回调方法：- (void)pickerViewControllerDoneAsstes:(NSArray *)assets
  第二种回调方法pickerVc.callBack = ^(NSArray *assets){

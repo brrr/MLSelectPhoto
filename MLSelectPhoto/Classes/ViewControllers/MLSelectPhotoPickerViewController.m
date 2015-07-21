@@ -66,9 +66,9 @@
 }
 
 #pragma mark - 展示控制器
-- (void)show{
+- (void)showPickerVc:(UIViewController *)vc{
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-    [[[[UIApplication sharedApplication].windows lastObject] rootViewController] presentViewController:self animated:YES completion:nil];
+    [vc presentViewController:self animated:YES completion:nil];
 }
 
 - (void) addNotification{

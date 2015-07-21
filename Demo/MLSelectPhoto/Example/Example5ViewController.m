@@ -69,7 +69,7 @@
     pickerVc.topShowPhotoPicker = YES;
     pickerVc.status = PickerViewShowStatusCameraRoll;
     pickerVc.minCount = 9;
-    [pickerVc show];
+    [pickerVc showPickerVc:self];
     __weak typeof(self) weakSelf = self;
     pickerVc.callBack = ^(NSArray *assets){
         [weakSelf.assets addObjectsFromArray:assets];
