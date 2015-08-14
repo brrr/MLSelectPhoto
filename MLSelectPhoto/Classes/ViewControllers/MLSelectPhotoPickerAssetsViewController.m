@@ -336,7 +336,14 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
         [self.selectAssets addObject:[pickerCollectionView.selectAsstes lastObject]];
     }
     
-    NSInteger count = self.selectAssets.count;
+    NSInteger count = 0;
+    if (pickerCollectionView.selectAsstes.count < self.selectAssets.count) {
+        count = pickerCollectionView.selectAsstes.count;
+    }else{
+        count = self.selectAssets.count;
+    }
+    
+    
     self.makeView.hidden = !count;
     self.makeView.text = [NSString stringWithFormat:@"%ld",(long)count];
     self.doneBtn.enabled = (count > 0);

@@ -57,5 +57,4 @@
     self.groupPicCountLabel.text = [NSString stringWithFormat:@"(%ld)",group.assetsCount];
 }
 
-
 @end
