@@ -288,6 +288,16 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
         self.previewBtn.enabled = (count > 0);
         self.doneBtn.enabled = (count > 0);
         
+        // 刷新当前相册
+        if (isCameraAutoSavePhoto) {
+            if([UIImagePickerController isSourceTypeAvailable: UIImagePickerControllerSourceTypeSavedPhotosAlbum]) {
+                UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
+                NSLog(@"MLSelectPhoto : 保存成功");
+            }else{
+                NSLog(@"MLSelectPhoto : 没有用户权限,保存失败");
+            }
+        }
+        
         [picker dismissViewControllerAnimated:YES completion:nil];
     }else{
         NSLog(@"请在真机使用!");
@@ -304,7 +314,7 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
 - (void)setTopShowPhotoPicker:(BOOL)topShowPhotoPicker{
     _topShowPhotoPicker = topShowPhotoPicker;
     
-    if (self.topShowPhotoPicker == YES) {
+    if (topShowPhotoPicker) {
         NSMutableArray *reSortArray= [[NSMutableArray alloc] init];
         for (id obj in [self.collectionView.dataArray reverseObjectEnumerator]) {
             [reSortArray addObject:obj];

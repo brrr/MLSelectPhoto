@@ -13,6 +13,8 @@
 
 // 图片最多显示9张，超过9张取消单击事件
 static NSInteger const KPhotoShowMaxCount = 9;
+// 是否开启拍照自动保存图片
+static BOOL const isCameraAutoSavePhoto = YES;
 
 #define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 \
 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 \
