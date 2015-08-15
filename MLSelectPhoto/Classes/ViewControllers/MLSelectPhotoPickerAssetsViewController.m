@@ -285,6 +285,7 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
         NSInteger count = self.selectAssets.count;
         self.makeView.hidden = !count;
         self.makeView.text = [NSString stringWithFormat:@"%ld",(long)count];
+        self.previewBtn.enabled = (count > 0);
         self.doneBtn.enabled = (count > 0);
         
         [picker dismissViewControllerAnimated:YES completion:nil];
