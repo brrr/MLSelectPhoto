@@ -15,6 +15,8 @@
 static NSInteger const KPhotoShowMaxCount = 9;
 // 是否开启拍照自动保存图片
 static BOOL const isCameraAutoSavePhoto = YES;
+// HUD提示框动画执行的秒数
+static CGFloat KHUDShowDuration = 1.0;
 
 #define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 \
 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 \

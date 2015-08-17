@@ -20,4 +20,5 @@
 @property (nonatomic,assign) CGFloat ml_height;
 @property (nonatomic,assign) CGSize ml_size;
 
+- (void)showMessageWithText:(NSString *)text;
 @end

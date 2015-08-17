@@ -16,6 +16,7 @@
 #import "MLSelectPhotoPickerCollectionViewCell.h"
 #import "MLSelectPhotoPickerFooterCollectionReusableView.h"
 #import "MLSelectPhotoBrowserViewController.h"
+#import "UIView+MLExtension.h"
 
 static CGFloat CELL_ROW = 4;
 static CGFloat CELL_MARGIN = 2;
@@ -262,6 +263,11 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
 }
 
 - (void)pickerCollectionViewDidCameraSelect:(MLSelectPhotoPickerCollectionView *)pickerCollectionView{
+    
+    if (self.selectAssets.count >= KPhotoShowMaxCount) {
+        [self.view showMessageWithText:[NSString stringWithFormat:@"选择的图片个数不能大于%ld",KPhotoShowMaxCount]];
+        return ;
+    }
     
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
         UIImagePickerController *ctrl = [[UIImagePickerController alloc] init];

@@ -8,6 +8,7 @@
 //
 
 #import "UIView+MLExtension.h"
+#import "MLSelectPhotoCommon.h"
 
 @implementation UIView (Extension)
 
@@ -71,6 +72,30 @@
 }
 - (CGSize)ml_size{
     return self.frame.size;
+}
+
+- (void)showMessageWithText:(NSString *)text{
+    UILabel *alertLabel = [[UILabel alloc] init];
+    alertLabel.font = [UIFont systemFontOfSize:15];
+    alertLabel.text = text;
+    alertLabel.textAlignment = NSTextAlignmentCenter;
+    alertLabel.layer.masksToBounds = YES;
+    alertLabel.textColor = [UIColor whiteColor];
+    alertLabel.frame = CGRectMake(0, 0, 100, 80);
+    [alertLabel sizeToFit];
+    alertLabel.ml_width += 50;
+    alertLabel.ml_height = 80;
+    alertLabel.ml_x = (self.ml_width - alertLabel.ml_width) * 0.5;
+    alertLabel.ml_y = (self.ml_height - alertLabel.ml_height) * 0.5;
+    alertLabel.backgroundColor = [UIColor colorWithRed:25/255.0 green:25/255.0 blue:25/255.0 alpha:1.0];
+    alertLabel.layer.cornerRadius = 10.0f;
+    [[UIApplication sharedApplication].keyWindow addSubview:alertLabel];
+
+    [UIView animateWithDuration:KHUDShowDuration animations:^{
+        alertLabel.alpha = 0.0;
+    } completion:^(BOOL finished) {
+        [alertLabel removeFromSuperview];
+    }];
 }
 
 @end
