@@ -107,7 +107,6 @@
         _photoImageView.image = photo.originImage;
         [self displayImage];
     }
-    
 }
 
 #pragma mark - Image

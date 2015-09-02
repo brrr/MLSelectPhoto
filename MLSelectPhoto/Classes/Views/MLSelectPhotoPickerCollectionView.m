@@ -78,9 +78,13 @@
     
     MLSelectPhotoPickerCollectionViewCell *cell = [MLSelectPhotoPickerCollectionViewCell cellWithCollectionView:collectionView cellForItemAtIndexPath:indexPath];
     
-    MLPhotoPickerImageView *cellImgView = [[MLPhotoPickerImageView alloc] initWithFrame:cell.bounds];
-    cellImgView.maskViewFlag = YES;
-    
+    MLPhotoPickerImageView *cellImgView = nil;
+    if ([[cell.contentView.subviews lastObject] isKindOfClass:[MLPhotoPickerImageView class]]) {
+        cellImgView = (MLPhotoPickerImageView *)[cell.contentView.subviews lastObject];        cellImgView.maskViewFlag = YES;
+    }else{
+        cellImgView = [[MLPhotoPickerImageView alloc] initWithFrame:cell.bounds];
+    }
+        cellImgView.maskViewFlag = YES;
     if(indexPath.item == 0 && self.topShowPhotoPicker){
         UIImageView *imageView = [[cell.contentView subviews] lastObject];
         // 判断真实类型

@@ -39,9 +39,7 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
 @property (strong,nonatomic) UIToolbar *toolBar;
 
 // Datas
-@property (assign,nonatomic) NSUInteger privateTempMinCount;
-// 数据源
-@property (strong,nonatomic) NSMutableArray *assets;
+//@property (assign,nonatomic) NSUInteger privateTempMinCount;
 // 记录选中的assets
 @property (strong,nonatomic) NSMutableArray *selectAssets;
 @end
@@ -91,14 +89,9 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
 }
 
 - (void)setSelectPickerAssets:(NSArray *)selectPickerAssets{
+    // 去掉重复的Piker
     NSSet *set = [NSSet setWithArray:selectPickerAssets];
     _selectPickerAssets = [set allObjects];
-    
-    if (!self.assets) {
-        self.assets = [NSMutableArray arrayWithArray:selectPickerAssets];
-    }else{
-        [self.assets addObjectsFromArray:selectPickerAssets];
-    }
     
     for (MLSelectPhotoAssets *assets in selectPickerAssets) {
         if ([assets isKindOfClass:[MLSelectPhotoAssets class]]) {
@@ -177,6 +170,8 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
     self.view.bounds = [UIScreen mainScreen].bounds;
     self.view.backgroundColor = [UIColor whiteColor];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refresh:) name:PICKER_REFRESH_DONE object:nil];
+    
     // 初始化按钮
     [self setupButtons];
     
@@ -184,6 +179,25 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
     [self setupToorBar];
 }
 
+- (void)refresh:(NSNotification *)noti{
+    self.selectAssets = noti.userInfo[@"assets"];
+    [self.collectionView.selectsIndexPath removeAllObjects];
+    self.collectionView.selectAsstes = noti.userInfo[@"assets"];
+    [self.collectionView reloadData];
+
+    NSInteger count = 0;
+    if (self.collectionView.selectAsstes.count < self.selectAssets.count) {
+        count = self.collectionView.selectAsstes.count;
+    }else{
+        count = self.selectAssets.count;
+    }
+
+    self.makeView.hidden = !count;
+    self.makeView.text = [NSString stringWithFormat:@"%ld",(long)count];
+    self.doneBtn.enabled = (count > 0);
+    self.previewBtn.enabled = (count > 0);
+    
+}
 
 #pragma mark - setter
 #pragma mark 初始化按钮
@@ -193,10 +207,6 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
 
 #pragma mark 初始化所有的组
 - (void) setupAssets{
-    if (!self.assets) {
-        self.assets = [NSMutableArray array];
-    }
-    
     __block NSMutableArray *assetsM = [NSMutableArray array];
     __weak typeof(self) weakSelf = self;
     
@@ -238,16 +248,17 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
 -(void)setMinCount:(NSInteger)minCount{
     _minCount = minCount;
     
-    if (!_privateTempMinCount) {
-        _privateTempMinCount = minCount;
-    }
+//    if (!_privateTempMinCount) {
+//        _privateTempMinCount = minCount;
+//    }
 
     if (self.selectAssets.count == minCount){
         minCount = 0;
-    }else if (self.selectPickerAssets.count - self.selectAssets.count > 0) {
-        minCount = _privateTempMinCount;
     }
-    
+//    else if (self.selectPickerAssets.count - self.selectAssets.count > 0) {
+//        minCount = _privateTempMinCount;
+//    }
+//    
     self.collectionView.minCount = minCount;
 }
 
@@ -285,7 +296,6 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
         // 处理
         UIImage *image = info[@"UIImagePickerControllerOriginalImage"];
         
-        [self.assets addObject:image];
         [self.selectAssets addObject:image];
         
         NSInteger count = self.selectAssets.count;
@@ -360,12 +370,10 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
         count = self.selectAssets.count;
     }
     
-    
     self.makeView.hidden = !count;
     self.makeView.text = [NSString stringWithFormat:@"%ld",(long)count];
     self.doneBtn.enabled = (count > 0);
     self.previewBtn.enabled = (count > 0);
-    
     
     if (self.selectPickerAssets.count || deleteAssets) {
         MLSelectPhotoAssets *asset = [pickerCollectionView.lastDataArray lastObject];
@@ -394,39 +402,8 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
             self.makeView.text = [NSString stringWithFormat:@"%ld",self.selectAssets.count];
         }
         // 刷新下最小的页数
-        self.minCount = self.selectAssets.count + (_privateTempMinCount - self.selectAssets.count);
+        self.minCount = self.selectAssets.count + self.selectAssets.count;
     }
-}
-
-#pragma mark -
-#pragma mark - UICollectionViewDataSource
-- (NSInteger) numberOfSectionsInCollectionView:(UICollectionView *)collectionView{
-    return 1;
-}
-
-- (NSInteger) collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
-    return self.selectAssets.count;
-}
-
-- (UICollectionViewCell *) collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
-    
-    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:_identifier forIndexPath:indexPath];
-    
-    if (self.selectAssets.count > indexPath.item) {
-        UIImageView *imageView = [[cell.contentView subviews] lastObject];
-        // 判断真实类型
-        if (![imageView isKindOfClass:[UIImageView class]]) {
-            imageView = [[UIImageView alloc] initWithFrame:cell.bounds];
-            imageView.contentMode = UIViewContentModeScaleAspectFit;
-            imageView.clipsToBounds = YES;
-            [cell.contentView addSubview:imageView];
-        }
-        
-        imageView.tag = indexPath.item;
-        imageView.image = [self.selectAssets[indexPath.item] thumbImage];
-    }
-    
-    return cell;
 }
 
 #pragma mark -<Navigation Actions>

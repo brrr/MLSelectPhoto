@@ -292,6 +292,8 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
     
+    [[NSNotificationCenter defaultCenter] postNotificationName:PICKER_REFRESH_DONE object:nil userInfo:@{@"assets":self.doneAssets}];
+    
     self.navigationController.navigationBar.hidden = NO;
     self.toolBar.hidden = NO;
 }
