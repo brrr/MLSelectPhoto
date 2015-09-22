@@ -115,7 +115,7 @@
     assetsVc.assetsGroup = gp;
     assetsVc.topShowPhotoPicker = self.topShowPhotoPicker;
     assetsVc.groupVc = self;
-    assetsVc.minCount = self.minCount;
+    assetsVc.maxCount = self.maxCount;
     [self.navigationController pushViewController:assetsVc animated:NO];
 }
 
@@ -133,7 +133,7 @@
     assetsVc.groupVc = self;
     assetsVc.assetsGroup = group;
     assetsVc.topShowPhotoPicker = self.topShowPhotoPicker;
-    assetsVc.minCount = self.minCount;
+    assetsVc.maxCount = self.maxCount;
     [self.navigationController pushViewController:assetsVc animated:YES];
 }
 

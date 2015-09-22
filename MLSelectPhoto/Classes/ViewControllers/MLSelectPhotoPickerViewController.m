@@ -59,10 +59,10 @@
     self.groupVc.status = status;
 }
 
-- (void)setMinCount:(NSInteger)minCount{
-    if (minCount <= 0) return;
-    _minCount = minCount;
-    self.groupVc.minCount = minCount;
+- (void)setMaxCount:(NSInteger)maxCount{
+    if (maxCount <= 0) return;
+    _maxCount = maxCount;
+    self.groupVc.maxCount = maxCount;
 }
 
 #pragma mark - 展示控制器
@@ -112,7 +112,7 @@
     }else if ([imageObj isKindOfClass:[ALAsset class]]){
         @autoreleasepool {
             ALAsset *asset = (ALAsset *)imageObj;
-            return [UIImage imageWithCGImage:[asset thumbnail]];
+            return [UIImage imageWithCGImage:[asset aspectRatioThumbnail]];
         }
     }else if ([imageObj isKindOfClass:[MLSelectPhotoAssets class]]){
         return [imageObj thumbImage];

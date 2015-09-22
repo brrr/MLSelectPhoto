@@ -13,7 +13,7 @@
 @implementation MLSelectPhotoAssets
 
 - (UIImage *)thumbImage{
-    return [UIImage imageWithCGImage:[self.asset thumbnail]];
+    return [UIImage imageWithCGImage:[self.asset aspectRatioThumbnail]];
 }
 
 - (UIImage *)originImage{

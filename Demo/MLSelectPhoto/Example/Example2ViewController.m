@@ -66,7 +66,7 @@
     MLSelectPhotoPickerViewController *pickerVc = [[MLSelectPhotoPickerViewController alloc] init];
     // 默认显示相册里面的内容SavePhotos
     // 默认最多能选9张图片
-    pickerVc.minCount = 5;
+    pickerVc.maxCount = 5;
     pickerVc.status = PickerViewShowStatusCameraRoll;
     [pickerVc showPickerVc:self];
     __weak typeof(self) weakSelf = self;

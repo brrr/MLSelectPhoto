@@ -13,9 +13,9 @@
 
 @interface MLSelectPhotoPickerGroupViewController : UIViewController
 
-@property (nonatomic , weak) id<ZLPhotoPickerViewControllerDelegate> delegate;
-@property (nonatomic , assign) PickerViewShowStatus status;
-@property (nonatomic , assign) NSInteger minCount;
+@property (nonatomic, weak) id<ZLPhotoPickerViewControllerDelegate> delegate;
+@property (nonatomic, assign) PickerViewShowStatus status;
+@property (nonatomic, assign) NSInteger maxCount;
 // 记录选中的值
 @property (strong,nonatomic) NSArray *selectAsstes;
 @property (assign,nonatomic) BOOL topShowPhotoPicker;

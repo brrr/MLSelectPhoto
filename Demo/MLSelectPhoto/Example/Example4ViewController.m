@@ -70,7 +70,7 @@
     MLSelectPhotoPickerViewController *pickerVc = [[MLSelectPhotoPickerViewController alloc] init];
     // 默认显示相册里面的视频
     // 最多能选9个视频
-    pickerVc.minCount = 9;
+    pickerVc.maxCount = 9;
     pickerVc.status = PickerViewShowStatusVideo;
     [pickerVc showPickerVc:self];
     /**

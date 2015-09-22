@@ -39,7 +39,7 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
 @property (strong,nonatomic) UIToolbar *toolBar;
 
 // Datas
-//@property (assign,nonatomic) NSUInteger privateTempMinCount;
+@property (assign,nonatomic) NSUInteger privateTempMaxCount;
 // 记录选中的assets
 @property (strong,nonatomic) NSMutableArray *selectAssets;
 @end
@@ -245,21 +245,20 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
 }
 
 #pragma mark - setter
--(void)setMinCount:(NSInteger)minCount{
-    _minCount = minCount;
+-(void)setMaxCount:(NSInteger)maxCount{
+    _maxCount = maxCount;
     
-//    if (!_privateTempMinCount) {
-//        _privateTempMinCount = minCount;
-//    }
-
-    if (self.selectAssets.count == minCount){
-        minCount = 0;
+    if (!_privateTempMaxCount) {
+        _privateTempMaxCount = maxCount;
     }
-//    else if (self.selectPickerAssets.count - self.selectAssets.count > 0) {
-//        minCount = _privateTempMinCount;
-//    }
-//    
-    self.collectionView.minCount = minCount;
+    
+    if (self.selectAssets.count == maxCount){
+        maxCount = 0;
+    }else if (self.selectPickerAssets.count - self.selectAssets.count > 0) {
+        maxCount = _privateTempMaxCount;
+    }
+    
+    self.collectionView.maxCount = maxCount;
 }
 
 - (void)setAssetsGroup:(MLSelectPhotoPickerGroup *)assetsGroup{
@@ -363,18 +362,6 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
         [self.selectAssets addObject:[pickerCollectionView.selectAsstes lastObject]];
     }
     
-    NSInteger count = 0;
-    if (pickerCollectionView.selectAsstes.count < self.selectAssets.count) {
-        count = pickerCollectionView.selectAsstes.count;
-    }else{
-        count = self.selectAssets.count;
-    }
-    
-    self.makeView.hidden = !count;
-    self.makeView.text = [NSString stringWithFormat:@"%ld",(long)count];
-    self.doneBtn.enabled = (count > 0);
-    self.previewBtn.enabled = (count > 0);
-    
     if (self.selectPickerAssets.count || deleteAssets) {
         MLSelectPhotoAssets *asset = [pickerCollectionView.lastDataArray lastObject];
         if (deleteAssets){
@@ -402,7 +389,27 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
             self.makeView.text = [NSString stringWithFormat:@"%ld",self.selectAssets.count];
         }
         // 刷新下最小的页数
-        self.minCount = self.selectAssets.count + self.selectAssets.count;
+        self.maxCount = self.selectAssets.count + (_privateTempMaxCount - self.selectAssets.count);
+        
+        self.makeView.hidden = !self.selectAssets.count;
+        self.makeView.text = [NSString stringWithFormat:@"%ld",(long)self.selectAssets.count];
+        self.doneBtn.enabled = (self.selectAssets.count > 0);
+        self.previewBtn.enabled = (self.selectAssets.count > 0);
+        
+    }else{
+        
+        NSInteger count = 0;
+        if (pickerCollectionView.selectAsstes.count < self.selectAssets.count) {
+            count = pickerCollectionView.selectAsstes.count;
+        }else{
+            count = self.selectAssets.count;
+        }
+        
+        self.makeView.hidden = !count;
+        self.makeView.text = [NSString stringWithFormat:@"%ld",(long)count];
+        self.doneBtn.enabled = (count > 0);
+        self.previewBtn.enabled = (count > 0);
+        
     }
 }
 
