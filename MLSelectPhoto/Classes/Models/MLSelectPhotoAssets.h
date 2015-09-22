@@ -26,6 +26,9 @@
  *  获取是否是视频类型, Default = false
  */
 @property (assign,nonatomic) BOOL isVideoType;
-
+/**
+ *  获取图片的URL
+ */
+- (NSURL *)assetURL;
 
 @end

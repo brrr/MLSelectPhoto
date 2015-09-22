@@ -26,4 +26,8 @@
     return [type isEqualToString:ALAssetTypeVideo];
 }
 
+- (NSURL *)assetURL{
+    return [[self.asset defaultRepresentation] url];
+}
+
 @end

@@ -16,7 +16,7 @@
 
 @interface MLSelectPhotoPickerAssetsViewController : UIViewController
 
-@property (strong,nonatomic) MLSelectPhotoPickerGroupViewController *groupVc;
+@property (weak ,nonatomic) MLSelectPhotoPickerGroupViewController *groupVc;
 @property (nonatomic , assign) PickerViewShowStatus status;
 @property (nonatomic , strong) MLSelectPhotoPickerGroup *assetsGroup;
 @property (nonatomic , assign) NSInteger maxCount;
