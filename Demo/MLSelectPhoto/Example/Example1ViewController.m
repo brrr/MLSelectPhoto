@@ -66,7 +66,6 @@
     MLSelectPhotoPickerViewController *pickerVc = [[MLSelectPhotoPickerViewController alloc] init];
     // 默认显示相册里面的内容SavePhotos
     pickerVc.status = PickerViewShowStatusCameraRoll;
-    pickerVc.maxCount = 9;
     [pickerVc showPickerVc:self];
     __weak typeof(self) weakSelf = self;
     pickerVc.callBack = ^(NSArray *assets){
