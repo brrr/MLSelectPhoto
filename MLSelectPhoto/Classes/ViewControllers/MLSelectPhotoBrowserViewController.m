@@ -224,22 +224,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 - (void) reloadData{
     
     [self.collectionView reloadData];
-    
-    if (self.currentPage >= 0) {
-        CGFloat attachVal = 0;
-        if (self.currentPage == self.photos.count - 1 && self.currentPage > 0) {
-            attachVal = ZLPickerColletionViewPadding;
-        }
-        
-        self.collectionView.ml_x = -attachVal;
-        self.collectionView.contentOffset = CGPointMake(self.currentPage * self.collectionView.ml_width, 0);
-        
-        if (self.currentPage == self.photos.count - 1 && self.photos.count > 1) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(00.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                self.collectionView.contentOffset = CGPointMake(self.currentPage * self.collectionView.ml_width, self.collectionView.contentOffset.y);
-            });
-        }
-    }
+    self.collectionView.contentOffset = CGPointMake(self.currentPage * self.collectionView.ml_width, self.collectionView.contentOffset.y);
     
     // 添加自定义View
     [self setPageLabelPage:self.currentPage];
@@ -336,9 +321,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
     NSInteger currentPage = (NSInteger)scrollView.contentOffset.x / (scrollView.ml_width - ZLPickerColletionViewPadding);
-    if (currentPage == self.photos.count - 1 && currentPage != self.currentPage && [[[UIDevice currentDevice] systemVersion] doubleValue] >= 8.0) {
-        self.collectionView.contentOffset = CGPointMake(self.collectionView.contentOffset.x, self.collectionView.contentOffset.y);
-    }
+    
     self.currentPage = currentPage;
     [self setPageLabelPage:currentPage];
 }
