@@ -54,7 +54,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 - (void)setDoneAssets:(NSMutableArray *)doneAssets{
     _doneAssets = [NSMutableArray arrayWithArray:doneAssets];
     
-    [self refreshAsset];    
+    [self refreshAsset];
 }
 
 - (UICollectionView *)collectionView{
@@ -140,7 +140,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 
 - (void)setPhotos:(NSArray *)photos{
     _photos = photos;
-
+    
     [self reloadData];
 }
 
@@ -185,7 +185,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 }
 
 - (void)refreshAsset{
-
+    
     for (NSInteger i = 0; i < self.photos.count; i++) {
         MLSelectPhotoAssets *asset = [self.photos objectAtIndex:i];
         
@@ -200,7 +200,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 
 - (void)deleteAsset{
     NSString *currentPage = [NSString stringWithFormat:@"%ld",self.currentPage];
-
+    
     if ([self.doneAssets containsObject:[self.photos objectAtIndex:self.currentPage]]) {
         [self.doneAssets removeObject:[self.photos objectAtIndex:self.currentPage]];
         [self.deleleBtn setImage:[[UIImage imageNamed:MLSelectPhotoSrcName(@"AssetsPickerChecked") ] imageWithTintColor:[UIColor grayColor]] forState:UIControlStateNormal];
@@ -224,6 +224,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 - (void) reloadData{
     
     [self.collectionView reloadData];
+    [self.collectionView layoutIfNeeded];
     self.collectionView.contentOffset = CGPointMake(self.currentPage * self.collectionView.ml_width, self.collectionView.contentOffset.y);
     
     // 添加自定义View
