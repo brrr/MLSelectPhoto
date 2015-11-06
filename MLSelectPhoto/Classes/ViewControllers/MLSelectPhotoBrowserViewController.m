@@ -16,7 +16,7 @@
 #import "UIImage+MLTint.h"
 
 // 分页控制器的高度
-static NSInteger ZLPickerColletionViewPadding = 20;
+static NSInteger ZLPickerColletionViewPadding = 10;
 static NSString *_cellIdentifier = @"collectionViewCell";
 
 @interface MLSelectPhotoBrowserViewController () <UIScrollViewDelegate,ZLPhotoPickerPhotoScrollViewDelegate,UICollectionViewDelegateFlowLayout,UICollectionViewDataSource,UICollectionViewDelegate>
@@ -60,8 +60,9 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 - (UICollectionView *)collectionView{
     if (!_collectionView) {
         UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
-        flowLayout.minimumLineSpacing = ZLPickerColletionViewPadding;
-        flowLayout.itemSize = self.view.ml_size;
+        flowLayout.minimumLineSpacing = 0;
+        flowLayout.minimumInteritemSpacing = 0;
+        flowLayout.itemSize = CGSizeMake(self.view.ml_size.width + ZLPickerColletionViewPadding, self.view.ml_size.height);
         flowLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
         
         UICollectionView *collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, self.view.ml_width + ZLPickerColletionViewPadding,self.view.ml_height) collectionViewLayout:flowLayout];
@@ -78,7 +79,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
         self.collectionView = collectionView;
         
         _collectionView.translatesAutoresizingMaskIntoConstraints = NO;
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[_collectionView]-x-|" options:0 metrics:@{@"x":@(-20)} views:@{@"_collectionView":_collectionView}]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[_collectionView]-x-|" options:0 metrics:@{@"x":@(-ZLPickerColletionViewPadding)} views:@{@"_collectionView":_collectionView}]];
         [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[_collectionView]-0-|" options:0 metrics:nil views:@{@"_collectionView":_collectionView}]];
         
         if (self.isEditing) {
@@ -312,17 +313,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 
 #pragma mark - <UIScrollViewDelegate>
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
-    CGRect tempF = self.collectionView.frame;
     NSInteger currentPage = (NSInteger)((scrollView.contentOffset.x / scrollView.ml_width) + 0.5);
-    if (tempF.size.width < [UIScreen mainScreen].bounds.size.width){
-        tempF.size.width = [UIScreen mainScreen].bounds.size.width;
-    }
-    
-    if ((currentPage < self.photos.count -1) || self.photos.count == 1) {
-        tempF.origin.x = 0;
-    }else if(scrollView.isDragging){
-        tempF.origin.x = -ZLPickerColletionViewPadding;
-    }
     
     if([[self.deleteAssets allValues] count] == 0 || [self.deleteAssets valueForKeyPath:[NSString stringWithFormat:@"%ld",(currentPage)]] == nil){
         [self.deleleBtn setImage:[[UIImage imageNamed:MLSelectPhotoSrcName(@"AssetsPickerChecked")] imageWithTintColor:[UIColor grayColor]] forState:UIControlStateNormal];
@@ -330,7 +321,6 @@ static NSString *_cellIdentifier = @"collectionViewCell";
         [self.deleleBtn setImage:[UIImage imageNamed:MLSelectPhotoSrcName(@"AssetsPickerChecked") ] forState:UIControlStateNormal];
     }
     
-    self.collectionView.frame = tempF;
 }
 
 - (void)done{
