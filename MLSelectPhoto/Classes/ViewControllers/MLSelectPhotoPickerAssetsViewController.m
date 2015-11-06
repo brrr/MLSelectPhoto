@@ -81,7 +81,7 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
         previewBtn.titleLabel.font = [UIFont systemFontOfSize:17];
         previewBtn.frame = CGRectMake(0, 0, 45, 45);
         [previewBtn setTitle:@"预览" forState:UIControlStateNormal];
-        [previewBtn addTarget:self action:@selector(preview) forControlEvents:UIControlEventTouchUpInside];
+//        [previewBtn addTarget:self action:@selector(preview) forControlEvents:UIControlEventTouchUpInside];
         [previewBtn addSubview:self.makeView];
         self.previewBtn = previewBtn;
     }
@@ -102,6 +102,8 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
     self.collectionView.lastDataArray = nil;
     self.collectionView.isRecoderSelectPicker = YES;
     self.collectionView.selectAsstes = self.selectAssets;
+    self.collectionView.doneAsstes = self.selectAssets;
+    
     NSInteger count = self.selectAssets.count;
     self.makeView.hidden = !count;
     self.makeView.text = [NSString stringWithFormat:@"%ld",(long)count];
@@ -171,6 +173,7 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
     self.view.backgroundColor = [UIColor whiteColor];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refresh:) name:PICKER_REFRESH_DONE object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(preview:) name:PICKER_PUSH_BROWSERPHOTO object:nil];
     
     // 初始化按钮
     [self setupButtons];
@@ -183,6 +186,7 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
     self.selectAssets = noti.userInfo[@"assets"];
     [self.collectionView.selectsIndexPath removeAllObjects];
     self.collectionView.selectAsstes = noti.userInfo[@"assets"];
+    self.collectionView.doneAsstes = noti.userInfo[@"assets"];
     [self.collectionView reloadData];
 
     NSInteger count = 0;
@@ -236,11 +240,12 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:heightVfl options:0 metrics:0 views:views]];
     
     // 左视图 中间距 右视图
-    UIBarButtonItem *leftItem = [[UIBarButtonItem alloc] initWithCustomView:self.previewBtn];
+//    UIBarButtonItem *leftItem = [[UIBarButtonItem alloc] initWithCustomView:self.previewBtn];
     UIBarButtonItem *fiexItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     UIBarButtonItem *rightItem = [[UIBarButtonItem alloc] initWithCustomView:self.doneBtn];
     
-    toorBar.items = @[leftItem,fiexItem,rightItem];
+//    toorBar.items = @[leftItem,fiexItem,rightItem];
+    toorBar.items = @[fiexItem,rightItem];
     
 }
 
@@ -258,7 +263,7 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
         maxCount = _privateTempMaxCount;
     }
     
-    if (!maxCount && !self.selectAssets.count && !self.selectPickerAssets.count) {
+    if (!maxCount && !self.selectAssets.count) {
         maxCount = KPhotoShowMaxCount;
     }
     
@@ -323,10 +328,13 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
     }
 }
 
-- (void)preview{
+- (void)preview:(NSNotification *)noti{
     MLSelectPhotoBrowserViewController *browserVc = [[MLSelectPhotoBrowserViewController alloc] init];
+    browserVc.maxCount = self.collectionView.maxCount;
+    browserVc.currentPage = [noti.userInfo[@"currentPage"] integerValue];
     [browserVc setValue:@(YES) forKeyPath:@"isEditing"];
-    browserVc.photos = self.selectAssets;
+    browserVc.photos = self.collectionView.dataArray;
+    browserVc.doneAssets = noti.userInfo[@"selectAssets"];
     [self.navigationController pushViewController:browserVc animated:YES];
 }
 
@@ -431,6 +439,7 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
 
 
 - (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     // 赋值给上一个控制器
     self.groupVc.selectAsstes = self.selectAssets;
 }

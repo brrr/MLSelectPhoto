@@ -32,7 +32,6 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 @property (strong,nonatomic)    UIButton *doneBtn;
 
 @property (strong,nonatomic)    NSMutableDictionary *deleteAssets;
-@property (strong,nonatomic)    NSMutableArray *doneAssets;
 
 // 是否是编辑模式
 @property (assign,nonatomic) BOOL isEditing;
@@ -44,6 +43,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 
 #pragma mark - getter
 #pragma mark collectionView
+
 -(NSMutableDictionary *)deleteAssets{
     if (!_deleteAssets) {
         _deleteAssets = [NSMutableDictionary dictionary];
@@ -51,11 +51,10 @@ static NSString *_cellIdentifier = @"collectionViewCell";
     return _deleteAssets;
 }
 
-- (NSMutableArray *)doneAssets{
-    if (!_doneAssets) {
-        _doneAssets = [NSMutableArray array];
-    }
-    return _doneAssets;
+- (void)setDoneAssets:(NSMutableArray *)doneAssets{
+    _doneAssets = [NSMutableArray arrayWithArray:doneAssets];
+    
+    [self refreshAsset];    
 }
 
 - (UICollectionView *)collectionView{
@@ -83,7 +82,6 @@ static NSString *_cellIdentifier = @"collectionViewCell";
         [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[_collectionView]-0-|" options:0 metrics:nil views:@{@"_collectionView":_collectionView}]];
         
         if (self.isEditing) {
-            self.makeView.hidden = !(self.photos.count && self.isEditing);
             // 初始化底部ToorBar
             [self setupToorBar];
         }
@@ -131,7 +129,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
     if (!_deleleBtn) {
         UIButton *deleleBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         deleleBtn.titleLabel.font = [UIFont systemFontOfSize:15];
-        [deleleBtn setImage:[UIImage imageNamed:MLSelectPhotoSrcName(@"AssetsPickerChecked")] forState:UIControlStateNormal];
+        [deleleBtn setImage:[[UIImage imageNamed:MLSelectPhotoSrcName(@"AssetsPickerChecked")] imageWithTintColor:[UIColor grayColor]] forState:UIControlStateNormal];
         deleleBtn.frame = CGRectMake(0, 0, 30, 30);
         [deleleBtn addTarget:self action:@selector(deleteAsset) forControlEvents:UIControlEventTouchUpInside];
         self.deleleBtn = deleleBtn;
@@ -141,10 +139,8 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 
 - (void)setPhotos:(NSArray *)photos{
     _photos = photos;
-    _doneAssets = [NSMutableArray arrayWithArray:photos];
-    
+
     [self reloadData];
-    self.makeView.text = [NSString stringWithFormat:@"%ld",self.photos.count];
 }
 
 - (void)setSheet:(UIActionSheet *)sheet{
@@ -187,23 +183,39 @@ static NSString *_cellIdentifier = @"collectionViewCell";
     toorBar.items = @[fiexItem,rightItem];
 }
 
-- (void)deleteAsset{
-    NSString *currentPage = [NSString stringWithFormat:@"%ld",self.currentPage];
-    if ([_deleteAssets valueForKeyPath:currentPage] == nil) {
-        [self.deleteAssets setObject:@YES forKey:currentPage];
-        [self.deleleBtn setImage:[[UIImage imageNamed:MLSelectPhotoSrcName(@"AssetsPickerChecked") ] imageWithTintColor:[UIColor grayColor]] forState:UIControlStateNormal];
+- (void)refreshAsset{
+
+    for (NSInteger i = 0; i < self.photos.count; i++) {
+        MLSelectPhotoAssets *asset = [self.photos objectAtIndex:i];
         
-        if ([self.doneAssets containsObject:[self.photos objectAtIndex:self.currentPage]]) {
-            [self.doneAssets removeObject:[self.photos objectAtIndex:self.currentPage]];
+        if ([self.doneAssets containsObject:asset]) {
+            [self.deleteAssets setObject:@YES forKey:[NSString stringWithFormat:@"%ld",i]];
         }
-    }else{
-        if (![self.doneAssets containsObject:[self.photos objectAtIndex:self.currentPage]]) {
-            [self.doneAssets addObject:[self.photos objectAtIndex:self.currentPage]];
-        }
-        [self.deleteAssets removeObjectForKey:currentPage];
-        [self.deleleBtn setImage:[UIImage imageNamed:MLSelectPhotoSrcName(@"AssetsPickerChecked") ] forState:UIControlStateNormal];
     }
     
+    self.makeView.hidden = !(self.doneAssets.count && self.isEditing);
+    self.makeView.text = [NSString stringWithFormat:@"%ld",self.doneAssets.count];
+}
+
+- (void)deleteAsset{
+    NSString *currentPage = [NSString stringWithFormat:@"%ld",self.currentPage];
+
+    if ([self.doneAssets containsObject:[self.photos objectAtIndex:self.currentPage]]) {
+        [self.doneAssets removeObject:[self.photos objectAtIndex:self.currentPage]];
+        [self.deleleBtn setImage:[[UIImage imageNamed:MLSelectPhotoSrcName(@"AssetsPickerChecked") ] imageWithTintColor:[UIColor grayColor]] forState:UIControlStateNormal];
+        [self.deleteAssets removeObjectForKey:currentPage];
+    }else{
+        if (self.doneAssets.count >= self.maxCount) {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您已经选满图片啦." delegate:nil cancelButtonTitle:@"好的" otherButtonTitles:nil, nil];
+            [alertView show];
+            return ;
+        }
+        [self.deleteAssets setObject:@YES forKey:currentPage];
+        [self.deleleBtn setImage:[UIImage imageNamed:MLSelectPhotoSrcName(@"AssetsPickerChecked") ] forState:UIControlStateNormal];
+        [self.doneAssets addObject:[self.photos objectAtIndex:self.currentPage]];
+    }
+    
+    self.makeView.hidden = !(self.doneAssets.count && self.isEditing);
     self.makeView.text = [NSString stringWithFormat:@"%ld",self.doneAssets.count];
 }
 
@@ -313,9 +325,9 @@ static NSString *_cellIdentifier = @"collectionViewCell";
     }
     
     if([[self.deleteAssets allValues] count] == 0 || [self.deleteAssets valueForKeyPath:[NSString stringWithFormat:@"%ld",(currentPage)]] == nil){
-        [self.deleleBtn setImage:[UIImage imageNamed:MLSelectPhotoSrcName(@"AssetsPickerChecked") ] forState:UIControlStateNormal];
+        [self.deleleBtn setImage:[[UIImage imageNamed:MLSelectPhotoSrcName(@"AssetsPickerChecked")] imageWithTintColor:[UIColor grayColor]] forState:UIControlStateNormal];
     }else{
-        [self.deleleBtn setImage:[[UIImage imageNamed:MLSelectPhotoSrcName(@"AssetsPickerChecked") ] imageWithTintColor:[UIColor grayColor]] forState:UIControlStateNormal];
+        [self.deleleBtn setImage:[UIImage imageNamed:MLSelectPhotoSrcName(@"AssetsPickerChecked") ] forState:UIControlStateNormal];
     }
     
     self.collectionView.frame = tempF;

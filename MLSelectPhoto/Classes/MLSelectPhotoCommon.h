@@ -32,6 +32,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 // NSNotification
 static NSString *PICKER_TAKE_DONE = @"PICKER_TAKE_DONE";
 static NSString *PICKER_REFRESH_DONE = @"PICKER_REFRESH_DONE";
+static NSString *PICKER_PUSH_BROWSERPHOTO = @"PICKER_PUSH_BROWSERPHOTO";
 
 // 图片路径
 #define MLSelectPhotoSrcName(file) [@"MLSelectPhoto.bundle" stringByAppendingPathComponent:file]

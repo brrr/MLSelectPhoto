@@ -13,7 +13,7 @@
 @interface MLPhotoPickerImageView ()
 
 @property (nonatomic , weak) UIView *maskView;
-@property (nonatomic , weak) UIImageView *tickImageView;
+@property (nonatomic , weak) UIButton *tickImageView;
 @property (nonatomic , weak) UIImageView *videoView;
 
 @end
@@ -24,6 +24,7 @@
     if (self = [super initWithFrame:frame]) {
         self.contentMode = UIViewContentModeScaleAspectFill;
         self.clipsToBounds = YES;
+        self.userInteractionEnabled = YES;
     }
     return self;
 }
@@ -51,12 +52,12 @@
     return _videoView;
 }
 
-- (UIImageView *)tickImageView{
+- (UIButton *)tickImageView{
     if (!_tickImageView) {
-        UIImageView *tickImageView = [[UIImageView alloc] init];
+        UIButton *tickImageView = [[UIButton alloc] init];
         tickImageView.frame = CGRectMake(self.bounds.size.width - 30, 0, 30, 30);
-        tickImageView.image = [UIImage imageNamed:MLSelectPhotoSrcName(@"AssetsPickerChecked")];
-        tickImageView.hidden = YES;
+        [tickImageView addTarget:self action:@selector(clickTick) forControlEvents:UIControlEventTouchUpInside];
+        [tickImageView setImage:[UIImage imageNamed:MLSelectPhotoSrcName(@"icon_image_no")] forState:UIControlStateNormal];
         [self addSubview:tickImageView];
         self.tickImageView = tickImageView;
     }
@@ -75,9 +76,25 @@
     self.animationRightTick = maskViewFlag;
 }
 
+- (void)setIndex:(NSInteger)index{
+    _index = index;
+    self.tickImageView.tag = index;
+}
+
+- (void)clickTick{
+    if ([self.delegate respondsToSelector:@selector(photoPickerClickTickButton:)]) {
+        [self.delegate photoPickerClickTickButton:self.tickImageView];
+    }
+}
+
 - (void)setAnimationRightTick:(BOOL)animationRightTick{
     _animationRightTick = animationRightTick;
-    self.tickImageView.hidden = !animationRightTick;
+    
+    if (animationRightTick) {
+        [self.tickImageView setImage:[UIImage imageNamed:MLSelectPhotoSrcName(@"icon_image_yes")] forState:UIControlStateNormal];
+    }else{
+        [self.tickImageView setImage:[UIImage imageNamed:MLSelectPhotoSrcName(@"icon_image_no")] forState:UIControlStateNormal];
+    }
     
     CAKeyframeAnimation *scaoleAnimation = [CAKeyframeAnimation animationWithKeyPath:@"transform.scale"];
     scaoleAnimation.duration = 0.25;

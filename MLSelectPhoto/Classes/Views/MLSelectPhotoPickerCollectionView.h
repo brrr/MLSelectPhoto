@@ -34,6 +34,8 @@ typedef NS_ENUM(NSUInteger, ZLPickerCollectionViewShowOrderStatus){
 @property (nonatomic , strong) NSArray *dataArray;
 // 保存选中的图片
 @property (nonatomic , strong) NSMutableArray *selectAsstes;
+// 保存选中的图片
+@property (nonatomic , strong) NSMutableArray *doneAsstes;
 // 最后保存的一次图片
 @property (strong,nonatomic) NSMutableArray *lastDataArray;
 // delegate

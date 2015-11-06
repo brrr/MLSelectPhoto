@@ -9,8 +9,19 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol MLPhotoPickerImageViewDelegate <NSObject>
+
+@optional
+// 点击图片
+- (void)photoPickerClickImageView;
+// 点击右上角的按钮
+- (void)photoPickerClickTickButton:(UIButton *)tickButton;
+@end
+
 @interface MLPhotoPickerImageView : UIImageView
 
+@property (assign,nonatomic) NSInteger index;
+@property (weak,nonatomic) id <MLPhotoPickerImageViewDelegate> delegate;
 /**
  *  是否有蒙版层
  */

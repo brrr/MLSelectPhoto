@@ -13,8 +13,12 @@
 @interface MLSelectPhotoBrowserViewController : UIViewController
 // 展示的图片 MLSelectAssets
 @property (strong,nonatomic) NSArray *photos;
+// 选择的Assets
+@property (strong,nonatomic) NSMutableArray *doneAssets;
 // 长按图片弹出的UIActionSheet
 @property (strong,nonatomic) UIActionSheet *sheet;
 // 当前提供的分页数
 @property (nonatomic , assign) NSInteger currentPage;
+// 最多能选择图片的个数
+@property (assign,nonatomic) NSInteger maxCount;
 @end

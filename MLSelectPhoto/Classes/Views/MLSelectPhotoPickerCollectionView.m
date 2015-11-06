@@ -14,7 +14,7 @@
 #import "MLSelectPhotoPickerFooterCollectionReusableView.h"
 #import "MLSelectPhotoCommon.h"
 
-@interface MLSelectPhotoPickerCollectionView () <UICollectionViewDataSource,UICollectionViewDelegate>
+@interface MLSelectPhotoPickerCollectionView () <UICollectionViewDataSource,UICollectionViewDelegate,MLPhotoPickerImageViewDelegate>
 
 @property (nonatomic , strong) MLSelectPhotoPickerFooterCollectionReusableView *footerView;
 
@@ -83,8 +83,10 @@
         cellImgView = (MLPhotoPickerImageView *)[cell.contentView.subviews lastObject];        cellImgView.maskViewFlag = YES;
     }else{
         cellImgView = [[MLPhotoPickerImageView alloc] initWithFrame:cell.bounds];
+        cellImgView.delegate = self;
     }
-        cellImgView.maskViewFlag = YES;
+    cellImgView.index = indexPath.row;
+    cellImgView.maskViewFlag = YES;
     if(indexPath.item == 0 && self.topShowPhotoPicker){
         UIImageView *imageView = [[cell.contentView subviews] lastObject];
         // 判断真实类型
@@ -100,7 +102,7 @@
         
         // 需要记录选中的值的数据
         if (self.isRecoderSelectPicker) {
-            for (MLSelectPhotoAssets *asset in self.selectAsstes) {
+            for (MLSelectPhotoAssets *asset in self.doneAsstes) {
                 if ([asset isKindOfClass:[MLSelectPhotoAssets class]] && [asset.asset.defaultRepresentation.url isEqual:[self.dataArray[indexPath.item] asset].defaultRepresentation.url]) {
                     [self.selectsIndexPath addObject:@(indexPath.row)];
                 }
@@ -121,27 +123,19 @@
     return cell;
 }
 
-#pragma mark - <UICollectionViewDelegate>
-- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
-
-    if (self.topShowPhotoPicker && indexPath.item == 0) {
-        if ([self.collectionViewDelegate respondsToSelector:@selector(pickerCollectionViewDidCameraSelect:)]) {
-            [self.collectionViewDelegate pickerCollectionViewDidCameraSelect:self];
-        }
-        return ;
-    }
-    
+- (void)photoPickerClickTickButton:(UIButton *)tickButton{
     if (!self.lastDataArray) {
         self.lastDataArray = [NSMutableArray array];
     }
     
-    MLSelectPhotoPickerCollectionViewCell *cell = (MLSelectPhotoPickerCollectionViewCell *) [collectionView cellForItemAtIndexPath:indexPath];
+    NSInteger row = tickButton.tag;
+    MLSelectPhotoPickerCollectionViewCell *cell = (MLSelectPhotoPickerCollectionViewCell *) [self cellForItemAtIndexPath:[NSIndexPath indexPathForItem:row inSection:0]];
     
-    MLSelectPhotoAssets *asset = self.dataArray[indexPath.row];
+    MLSelectPhotoAssets *asset = self.dataArray[row];
     MLPhotoPickerImageView *pickerImageView = [cell.contentView.subviews lastObject];
     // 如果没有就添加到数组里面，存在就移除
     if (pickerImageView.isMaskViewFlag) {
-        [self.selectsIndexPath removeObject:@(indexPath.row)];
+        [self.selectsIndexPath removeObject:@(row)];
         [self.selectAsstes removeObject:asset];
         [self.lastDataArray removeObject:asset];
     }else{
@@ -158,7 +152,7 @@
             return ;
         }
         
-        [self.selectsIndexPath addObject:@(indexPath.row)];
+        [self.selectsIndexPath addObject:@(row)];
         [self.selectAsstes addObject:asset];
         [self.lastDataArray addObject:asset];
     }
@@ -173,7 +167,18 @@
     }
     
     pickerImageView.maskViewFlag = ([pickerImageView isKindOfClass:[MLPhotoPickerImageView class]]) && !pickerImageView.isMaskViewFlag;
+}
+
+#pragma mark - <UICollectionViewDelegate>
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
+    if (self.topShowPhotoPicker && indexPath.item == 0) {
+        if ([self.collectionViewDelegate respondsToSelector:@selector(pickerCollectionViewDidCameraSelect:)]) {
+            [self.collectionViewDelegate pickerCollectionViewDidCameraSelect:self];
+        }
+        return ;
+    }
     
+    [[NSNotificationCenter defaultCenter] postNotificationName:PICKER_PUSH_BROWSERPHOTO object:nil userInfo:@{@"currentPage":@(indexPath.row),@"selectAssets":self.selectAsstes}];
 }
 
 #pragma mark 底部View
