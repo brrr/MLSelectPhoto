@@ -321,7 +321,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
-    NSInteger currentPage = (NSInteger)scrollView.contentOffset.x / (scrollView.ml_width - ZLPickerColletionViewPadding);
+    NSInteger currentPage = (NSInteger)scrollView.contentOffset.x / scrollView.ml_width;
     
     self.currentPage = currentPage;
     [self setPageLabelPage:currentPage];
