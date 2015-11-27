@@ -160,6 +160,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.automaticallyAdjustsScrollViewInsets = NO;
     self.view.backgroundColor = [UIColor blackColor];
 }
 
@@ -291,7 +292,9 @@ static NSString *_cellIdentifier = @"collectionViewCell";
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:PICKER_REFRESH_DONE object:nil userInfo:@{@"assets":self.doneAssets}];
+    if (self.doneAssets.count) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:PICKER_REFRESH_DONE object:nil userInfo:@{@"assets":self.doneAssets}];
+    }
     
     self.navigationController.navigationBar.hidden = NO;
     self.toolBar.hidden = NO;
