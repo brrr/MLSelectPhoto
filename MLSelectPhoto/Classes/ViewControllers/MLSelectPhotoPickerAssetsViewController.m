@@ -315,7 +315,8 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
         // 刷新当前相册
         if (isCameraAutoSavePhoto) {
             if([UIImagePickerController isSourceTypeAvailable: UIImagePickerControllerSourceTypeSavedPhotosAlbum]) {
-                UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
+                //TODO:待修复刷新collection后选择的图片错误的bug
+                UIImageWriteToSavedPhotosAlbum(image, self,@selector(image:didFinishSavingWithError:contextInfo:), nil);
                 NSLog(@"MLSelectPhoto : 保存成功");
             }else{
                 NSLog(@"MLSelectPhoto : 没有用户权限,保存失败");
@@ -326,6 +327,14 @@ static NSString *const _identifier = @"toolBarThumbCollectionViewCell";
     }else{
         NSLog(@"请在真机使用!");
     }
+}
+
+- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error
+  contextInfo:(void *)contextInfo{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self setupAssets];
+        [self setTopShowPhotoPicker:self.topShowPhotoPicker];    });
+    
 }
 
 - (void)preview:(NSNotification *)noti{

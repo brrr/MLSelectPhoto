@@ -55,6 +55,13 @@ static NSString *_cellIdentifier = @"collectionViewCell";
     _doneAssets = [NSMutableArray arrayWithArray:doneAssets];
     
     [self refreshAsset];
+    
+    
+    if (![self.doneAssets containsObject:[self.photos objectAtIndex:self.currentPage]]){
+        [self.deleleBtn setImage:[[UIImage imageNamed:MLSelectPhotoSrcName(@"AssetsPickerChecked")] imageWithTintColor:[UIColor grayColor]] forState:UIControlStateNormal];
+    }else{
+        [self.deleleBtn setImage:[UIImage imageNamed:MLSelectPhotoSrcName(@"AssetsPickerChecked") ] forState:UIControlStateNormal];
+    }
 }
 
 - (UICollectionView *)collectionView{
@@ -226,8 +233,7 @@ static NSString *_cellIdentifier = @"collectionViewCell";
     
     [self.collectionView reloadData];
     [self.collectionView layoutIfNeeded];
-    self.collectionView.contentOffset = CGPointMake(self.currentPage * self.collectionView.ml_width, self.collectionView.contentOffset.y);
-    
+    self.collectionView.contentOffset = CGPointMake(self.currentPage * self.collectionView.ml_width, self.collectionView.contentOffset.y);    
     // 添加自定义View
     [self setPageLabelPage:self.currentPage];
 }
